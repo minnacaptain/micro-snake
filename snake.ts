@@ -31,18 +31,26 @@ input.onButtonPressed(Button.AB, () => {
 })
 
 input.onButtonPressed(Button.B, () => {
-    if (direction === Dir.UP) {
-        direction = Dir.RIGHT
-    } else if (direction === Dir.RIGHT) {
-        direction = Dir.DOWN
-    } else if (direction === Dir.DOWN) {
-        direction = Dir.LEFT
-    } else if (direction === Dir.LEFT) {
-        direction = Dir.UP
-    }
+    turnClockwise()
 })
 
 input.onButtonPressed(Button.A, () => {
+    turnAntiClockwise()
+})
+
+const turnClockwise = () => {
+    if (direction === Dir.UP) {
+        direction = Dir.RIGHT
+    } else if (direction === Dir.RIGHT) {
+        direction = Dir.DOWN
+    } else if (direction === Dir.DOWN) {
+        direction = Dir.LEFT
+    } else if (direction === Dir.LEFT) {
+        direction = Dir.UP
+    }
+}
+
+const turnAntiClockwise = () => {
     if (direction === Dir.UP) {
         direction = Dir.LEFT
     } else if (direction === Dir.RIGHT) {
@@ -52,7 +60,7 @@ input.onButtonPressed(Button.A, () => {
     } else if (direction === Dir.LEFT) {
         direction = Dir.DOWN
     }
-})
+}
 
 const plotSnake = (pt: Point) => {
     led.plotBrightness(pt.cx, pt.cy, 130)
