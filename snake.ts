@@ -10,7 +10,7 @@ interface Point {
     cy: number
 }
 
-let gameOn = false
+let gameIsOver = false
 let snakeArray: Point[] = []
 let maxSnakeLength = 1
 let direction: Dir = Dir.RIGHT
@@ -24,17 +24,10 @@ const unplotScreen = () => {
     }
 }
 
-const resetGame = () => {
-    snakeArray = []
-    maxSnakeLength = 1
-    direction = Dir.RIGHT
-    unplotScreen()
-}
-
 input.onButtonPressed(Button.AB, () => {
-    resetGame()
-    gameOn = !gameOn
-    gameOn && control.inBackground(() => doGame())
+    if (!gameIsOver) {
+        control.inBackground(() => doGame())
+    }
 })
 
 input.onButtonPressed(Button.B, () => {
@@ -79,7 +72,7 @@ const doGame = () => {
     currentFood = getNextFood()
     plotFood(currentFood)
 
-    while (gameOn) {
+    while (true) {
         basic.pause(500)
         x = getNextX(x, direction)
         y = getNextY(y, direction)
@@ -87,7 +80,8 @@ const doGame = () => {
         const newPoint: Point = { cx: x, cy: y }
 
         if (isCollision(newPoint, snakeArray)) {
-            gameOn = false
+            gameIsOver = true
+            showGameOverScreen()
             break
         }
 
@@ -98,6 +92,12 @@ const doGame = () => {
 
         snakeArray = trimSnakeArray(snakeArray)
     }
+}
+
+const showGameOverScreen = () => {
+    unplotScreen()
+    basic.pause(500)
+    basic.showNumber(snakeArray.length)
 }
 
 const checkIfFoodJustEaten = (newPoint: Point) => {
