@@ -15,11 +15,11 @@ interface Point {
     cy: number
 }
 
-let gameMode: GameMode = GameMode.NAME_SELECTION
+let gameMode: GameMode = GameMode.SNAKE
 let letterIndex = 0
 let playerName = ''
+let playerScore = 0
 
-let gameIsStarted = false
 let gameIsOver = false
 let snakeArray: Point[] = []
 let maxSnakeLength = 1
@@ -35,16 +35,17 @@ const unplotScreen = () => {
 }
 
 input.onButtonPressed(Button.AB, () => {
-    if (gameMode === GameMode.NAME_SELECTION && playerName.length === 0) {
+    if (gameMode === GameMode.SNAKE && !gameIsOver) {
+        control.inBackground(() => doGame())
+    } else if (
+        gameMode === GameMode.NAME_SELECTION &&
+        playerName.length === 0
+    ) {
         showLetters(letterIndex)
     } else if (gameMode === GameMode.NAME_SELECTION) {
         unplotScreen()
-        basic.showString(playerName)
+        basic.showString(`${playerName} ${playerScore}`)
         gameMode = GameMode.SNAKE
-    } else if (gameMode === GameMode.SNAKE && !gameIsOver && !gameIsStarted) {
-        unplotScreen()
-        gameIsStarted = true
-        control.inBackground(() => doGame())
     }
 })
 
@@ -120,6 +121,7 @@ const doGame = () => {
 
         if (isCollision(newPoint, snakeArray)) {
             gameIsOver = true
+            playerScore = snakeArray.length
             showGameOverScreen()
             break
         }
@@ -136,7 +138,11 @@ const doGame = () => {
 const showGameOverScreen = () => {
     unplotScreen()
     basic.pause(500)
-    basic.showNumber(snakeArray.length)
+    basic.showNumber(playerScore)
+    unplotScreen()
+    basic.pause(500)
+    basic.showString('NAME?')
+    gameMode = GameMode.NAME_SELECTION
 }
 
 const checkIfFoodJustEaten = (newPoint: Point) => {
