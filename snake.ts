@@ -5,11 +5,21 @@ enum Dir {
     LEFT = 3
 }
 
+enum GameMode {
+    NAME_SELECTION = 0,
+    SNAKE = 1
+}
+
 interface Point {
     cx: number
     cy: number
 }
 
+let gameMode: GameMode = GameMode.NAME_SELECTION
+let letterIndex = 0
+let playerName = ''
+
+let gameIsStarted = false
 let gameIsOver = false
 let snakeArray: Point[] = []
 let maxSnakeLength = 1
@@ -25,17 +35,38 @@ const unplotScreen = () => {
 }
 
 input.onButtonPressed(Button.AB, () => {
-    if (!gameIsOver) {
+    if (gameMode === GameMode.NAME_SELECTION && playerName.length === 0) {
+        showLetters(letterIndex)
+    } else if (gameMode === GameMode.NAME_SELECTION) {
+        unplotScreen()
+        basic.showString(playerName)
+        gameMode = GameMode.SNAKE
+    } else if (gameMode === GameMode.SNAKE && !gameIsOver && !gameIsStarted) {
+        unplotScreen()
+        gameIsStarted = true
         control.inBackground(() => doGame())
     }
 })
 
 input.onButtonPressed(Button.B, () => {
-    turnClockwise()
+    if (gameMode === GameMode.NAME_SELECTION) {
+        selectLetter(letterIndex)
+        unplotScreen()
+        basic.pause(200)
+        letterIndex = 0
+        showLetters(letterIndex)
+    } else if (gameMode === GameMode.SNAKE) {
+        turnClockwise()
+    }
 })
 
 input.onButtonPressed(Button.A, () => {
-    turnAntiClockwise()
+    if (gameMode === GameMode.NAME_SELECTION) {
+        letterIndex = letterIndex + 1
+        showLetters(letterIndex)
+    } else if (gameMode === GameMode.SNAKE) {
+        turnAntiClockwise()
+    }
 })
 
 const turnClockwise = () => {
@@ -146,27 +177,67 @@ const trimSnakeArray = (array: Point[]): Point[] => {
 
 const getNextX = (x: number, direction: Dir): number => {
     if (direction === Dir.LEFT) {
-        return handleWalls(x - 1)
+        return loopArrayIndex(x - 1, 5)
     } else if (direction === Dir.RIGHT) {
-        return handleWalls(x + 1)
+        return loopArrayIndex(x + 1, 5)
     }
     return x
 }
 
 const getNextY = (y: number, direction: Dir): number => {
     if (direction === Dir.UP) {
-        return handleWalls(y - 1)
+        return loopArrayIndex(y - 1, 5)
     } else if (direction === Dir.DOWN) {
-        return handleWalls(y + 1)
+        return loopArrayIndex(y + 1, 5)
     }
     return y
 }
 
-const handleWalls = (z: number): number => {
-    if (z > 4) {
+const loopArrayIndex = (z: number, arrLength: number): number => {
+    if (z > arrLength - 1) {
         return 0
     } else if (z < 0) {
-        return 4
+        return arrLength - 1
     }
     return z
 }
+
+const showLetters = (index: number) => {
+    basic.showString(alphabet[index])
+}
+
+const selectLetter = (index: number) => {
+    playerName = playerName + alphabet[index]
+}
+
+const alphabet = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+    'Å',
+    'Ä',
+    'Ö'
+]
