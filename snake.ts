@@ -43,6 +43,7 @@ input.onButtonPressed(Button.AB, () => {
     ) {
         showLetters(letterIndex)
     } else if (gameMode === GameMode.NAME_SELECTION) {
+        bluetooth.uartWriteValue(playerName, playerScore)
         unplotScreen()
         basic.showString(`${playerName} ${playerScore}`)
         gameMode = GameMode.SNAKE
