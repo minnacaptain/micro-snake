@@ -16,16 +16,19 @@ let maxSnakeLength = 1
 let direction: Dir = Dir.RIGHT
 let currentFood: Point = null
 
-const resetGame = () => {
-    snakeArray = []
-    maxSnakeLength = 1
-    direction = Dir.RIGHT
-
+const unplotScreen = () => {
     for (let gx = 0; gx < 5; gx = gx + 1) {
         for (let gy = 0; gy < 5; gy = gy + 1) {
             led.unplot(gx, gy)
         }
     }
+}
+
+const resetGame = () => {
+    snakeArray = []
+    maxSnakeLength = 1
+    direction = Dir.RIGHT
+    unplotScreen()
 }
 
 input.onButtonPressed(Button.AB, () => {
@@ -58,13 +61,23 @@ input.onButtonPressed(Button.A, () => {
     }
 })
 
+const plotSnake = (pt: Point) => {
+    led.plotBrightness(pt.cx, pt.cy, 130)
+}
+
+const plotFood = (pt: Point) => {
+    led.plotBrightness(pt.cx, pt.cy, 255)
+}
+
 const doGame = () => {
     let x = 0
     let y = 0
+    const zeroPoint = { cx: x, cy: y }
+    plotSnake(zeroPoint)
+    snakeArray.push(zeroPoint)
+
     currentFood = getNextFood()
-    led.plot(x, y)
-    snakeArray.push({ cx: x, cy: y })
-    led.plot(currentFood.cx, currentFood.cy)
+    plotFood(currentFood)
 
     while (gameOn) {
         basic.pause(500)
@@ -79,7 +92,7 @@ const doGame = () => {
         }
 
         snakeArray.push(newPoint)
-        led.plot(newPoint.cx, newPoint.cy)
+        plotSnake(newPoint)
 
         checkIfFoodJustEaten(newPoint)
 
@@ -91,7 +104,7 @@ const checkIfFoodJustEaten = (newPoint: Point) => {
     if (newPoint.cx === currentFood.cx && newPoint.cy === currentFood.cy) {
         maxSnakeLength = maxSnakeLength + 1
         currentFood = getNextFood()
-        led.plot(currentFood.cx, currentFood.cy)
+        plotFood(currentFood)
     }
 }
 
