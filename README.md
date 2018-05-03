@@ -16,3 +16,5 @@ Alternatively, you can [install the program on your Microbit](https://makecode.m
 *   Press `A+B` to start.
 *   Press `A` to turn anti-clockwise
 *   Press `B` to turn clockwise
+
+![snake](./micro-snake.gif)
