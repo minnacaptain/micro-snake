@@ -5,17 +5,11 @@ enum Dir {
     LEFT = 3
 }
 
-enum GameMode {
-    NAME_SELECTION = 0,
-    SNAKE = 1
-}
-
 interface Point {
     cx: number
     cy: number
 }
 
-let gameMode: GameMode = GameMode.SNAKE
 let letterIndex = 0
 let playerName = ''
 let playerScore = 0
@@ -35,40 +29,20 @@ const unplotScreen = () => {
 }
 
 input.onButtonPressed(Button.AB, () => {
-    if (gameMode === GameMode.SNAKE && !gameIsOver) {
+    if (!gameIsOver) {
         control.inBackground(() => doGame())
-    } else if (
-        gameMode === GameMode.NAME_SELECTION &&
-        playerName.length === 0
-    ) {
-        showLetters(letterIndex)
-    } else if (gameMode === GameMode.NAME_SELECTION) {
-        bluetooth.uartWriteValue(playerName, playerScore)
+    } else {
         unplotScreen()
         basic.showString(`${playerName} ${playerScore}`)
-        gameMode = GameMode.SNAKE
     }
 })
 
 input.onButtonPressed(Button.B, () => {
-    if (gameMode === GameMode.NAME_SELECTION) {
-        selectLetter(letterIndex)
-        unplotScreen()
-        basic.pause(200)
-        letterIndex = 0
-        showLetters(letterIndex)
-    } else if (gameMode === GameMode.SNAKE) {
-        turnClockwise()
-    }
+    turnClockwise()
 })
 
 input.onButtonPressed(Button.A, () => {
-    if (gameMode === GameMode.NAME_SELECTION) {
-        letterIndex = letterIndex + 1
-        showLetters(letterIndex)
-    } else if (gameMode === GameMode.SNAKE) {
-        turnAntiClockwise()
-    }
+    turnAntiClockwise()
 })
 
 const turnClockwise = () => {
@@ -142,8 +116,6 @@ const showGameOverScreen = () => {
     basic.showNumber(playerScore)
     unplotScreen()
     basic.pause(500)
-    basic.showString('NAME?')
-    gameMode = GameMode.NAME_SELECTION
 }
 
 const checkIfFoodJustEaten = (newPoint: Point) => {
@@ -208,43 +180,3 @@ const loopArrayIndex = (z: number, arrLength: number): number => {
     }
     return z
 }
-
-const showLetters = (index: number) => {
-    basic.showString(alphabet[index])
-}
-
-const selectLetter = (index: number) => {
-    playerName = playerName + alphabet[index]
-}
-
-const alphabet = [
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-    'Å',
-    'Ä',
-    'Ö'
-]
